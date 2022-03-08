@@ -1,7 +1,21 @@
 {% extends 'base.html' %}
 {% block content %}
-    <title>Money Market</title>
+<title>Money Market</title>
 
-    <h1><b>Money Market Home Page</b></h1>
+<h1><b>Money Market Home Page</b></h1>
+<br/>
+<br/>
+
+{% if api %}
+    {% if api == "Error..." %}
+        <h3>There was a problem with your ticker symbol, please try again later</h3>
+    {% else %}
+
+        {% for key,value in api.items %}
+            {{ key }}:{{ value }} <br/>
+        {% endfor %}
+
+    {% endif %}
+{% endif %}
 
 {% endblock %}
