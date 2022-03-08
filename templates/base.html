@@ -36,10 +36,14 @@
         <li class="nav-item">
           <a class="nav-link" href="{% url 'about' %}">News</a>
         </li>
+          <li class="nav-item">
+          <a class="nav-link" href="{% url 'add_stock' %}">Add Stock</a>
+        </li>
       </ul>
-      <form class="d-flex">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
+      <form action="{% url 'index' %}" method="POST" class="d-flex" >
+          {% csrf_token %}
+        <input name="ticker" class="form-control me-2" type="search" placeholder="Get Stock Quote" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Quote</button>
       </form>
       <ul class="navbar-nav px-3 mb-2 mb-lg-0">
         <li class="nav-item">

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<title>Add Stock</title>
+
+<h1><b>Add Stocks here...</b></h1><br/>
+
+
+    {% for item in ticker %}
+        {{ item }}<br/>
+    {% endfor %}
+{% endblock %}
