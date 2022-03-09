@@ -1,6 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.http import HttpResponse, HttpRequest
 from .models import Stock
+from .forms import StockForm
+from django.contrib import messages
 # Create your views here.
 
 def index(request):
@@ -26,5 +28,20 @@ def about(request):
 
 def add_stock(request):
 
-    ticker = Stock.objects.all()
-    return render(request, 'add_stock.html', {'ticker' : ticker})
+    if request.method == 'POST':
+        form = StockForm(request.POST or None)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request,("Stock has been added!"))
+            return redirect('add_stock')
+    else:
+        ticker = Stock.objects.all()
+        return render(request, 'add_stock.html', {'ticker' : ticker})
+
+
+def delete_stock(request, stock_id):
+    item = Stock.objects.get(pk=stock_id)
+    item.delete()
+    messages.success(request, ("Stock has been deleted!"))
+    return redirect(add_stock)
