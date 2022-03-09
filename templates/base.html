@@ -39,6 +39,10 @@
           <li class="nav-item">
           <a class="nav-link" href="{% url 'add_stock' %}">Add Stock</a>
         </li>
+        </li>
+          <li class="nav-item">
+          <a class="nav-link" href="{% url 'delete' %}">Delete Stock</a>
+        </li>
       </ul>
       <form action="{% url 'index' %}" method="POST" class="d-flex" >
           {% csrf_token %}
