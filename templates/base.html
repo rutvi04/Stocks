@@ -33,21 +33,27 @@
     <a class="navbar-brand" href="/">Money Market</a>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'about' %}">News</a>
-        </li>
+
           <li class="nav-item">
           <a class="nav-link" href="{% url 'add_stock' %}">Add Stock</a>
         </li>
         </li>
           <li class="nav-item">
+          <a class="nav-link" href="{% url 'about' %}">About</a>
+        </li>
+
+          <li class="nav-item">
+          <a class="nav-link" href="{% url 'add_stock' %}">My Portfolio</a>
+        </li>
+          <li class="nav-item">
           <a class="nav-link" href="{% url 'delete' %}">Delete Stock</a>
         </li>
       </ul>
-      <form action="{% url 'index' %}" method="POST" class="d-flex" >
+
+      <form action="{% url 'search' ticker %}" method="POST" class="d-flex" >
           {% csrf_token %}
         <input name="ticker" class="form-control me-2" type="search" placeholder="Get Stock Quote" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Quote</button>
+        <button class="btn btn-outline-success" type="submit">Search</button>
       </form>
       <ul class="navbar-nav px-3 mb-2 mb-lg-0">
         <li class="nav-item">
@@ -107,6 +113,7 @@
     <!-- Social buttons -->
 
   </div>
+
   <!-- Footer Elements -->
 
   <!-- Copyright -->

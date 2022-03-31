@@ -1,14 +1,29 @@
+import pandas as pd
 from django.shortcuts import render,redirect
 from django.http import HttpResponse, HttpRequest
 from .models import Stock
 from .forms import StockForm
 from django.contrib import messages
+import requests
+import json
 # Create your views here.
 
 def index(request):
-    import requests
-    import json
+    ticker = ['aapl','msft','2222.sr','goog','amzn','tsla','brk-a','nvda','fb','tsm','unh','v','jnj','tcehy','wmt','005930.ks','pg','lvmuy','nsrgy','ma','xom','rhhby','bac','baba']
+    output = []
+    for ticker_items in ticker:
+            api_request = requests.get(
+                "https://cloud.iexapis.com/stable/stock/" + str(ticker_items) + "/quote?token=pk_0dff57f16e54425eb2601c2a89a23edf")
+            try:
+                api = json.loads(api_request.content)
+                output.append(api)
+            except Exception as e:
+                api = "Error..."
+    return render(request, 'index.html', {'ticker': ticker, 'output': output})
 
+
+
+def search(request,symb):
     if request.method == 'POST':
         ticker = request.POST['ticker']
         api_request = requests.get(
@@ -17,24 +32,26 @@ def index(request):
             api = json.loads(api_request.content)
         except Exception as e:
             api = "Error..."
-        return render(request, 'index.html', {'api': api})
-        # pk_5d448bc5ec78430f9f18a309b283a812
+        return render(request, 'search.html', {'api': api, 'ticker': ticker})
+        # pk_5d448bc5ec78430f9f18a309b283a812ch
+    elif symb:
+        ticker = symb
+        api_request = requests.get(
+            "https://cloud.iexapis.com/stable/stock/" + ticker + "/quote?token=pk_0dff57f16e54425eb2601c2a89a23edf")
+        try:
+            api = json.loads(api_request.content)
+        except Exception as e:
+            api = "Error..."
+        return render(request, 'search.html', {'api': api, 'ticker': ticker})
     else:
-        ticker = Stock.objects.all()
-        output = []
-        for ticker_items in ticker:
-            api_request = requests.get(
-                "https://cloud.iexapis.com/stable/stock/" + str(ticker_items) + "/quote?token=pk_0dff57f16e54425eb2601c2a89a23edf")
-            try:
-                api = json.loads(api_request.content)
-                output.append(api)
-            except Exception as e:
-                api = "Error..."
-        return render(request,'index.html', {'output': output,'ticker':ticker})
+        return render(request,'search.html', {'ticker': "Enter the symbol above"})
 
 
 def about(request):
-    return render(request, 'about.html', {})
+    api_request = requests.get(
+        'https://stocknewsapi.com/api/v1/category?section=general&items=50&token=zoiv7dexarnbjd4anbtduzucjw5bdjk5xxqpd93d')
+    api1 = json.loads(api_request.content)
+    return render(request, 'about.html', {'api1': api1})
 
 def add_stock(request):
     import requests
@@ -70,3 +87,4 @@ def delete_stock(request, stock_id):
 def delete(request):
     ticker = Stock.objects.all()
     return render(request, 'delete.html', {'ticker':ticker})
+
