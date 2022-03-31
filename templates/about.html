@@ -7,7 +7,7 @@
 
 <div class="container">
 	<div class="row">
-		{% for x in api1.data %}
+		{% for x in news_api.data %}
 			<div class="card text-white bg-dark mb-3" style="width: 18rem;">
 			  <a href="{{ x.news_url }}"><img href="{{ x.news_url }}" src="{{ x.image_url }}" class="card-img-top" alt="{{ x.source_name }}" class="list-group-item"></a>
 			  <div class="card-body">
@@ -27,11 +27,11 @@
     <br/>
 
 	<ul>
-		{% for x in api1.data %}
+		{% for x in news_api.data %}
 			<li>{{ x.title }}</li>
 		{% endfor %}
 	</ul>
 
-	{{ api1.data }}
+	{{ news_api.data }}
 
 {% endblock %}

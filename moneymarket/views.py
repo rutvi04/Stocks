@@ -21,8 +21,6 @@ def index(request):
                 api = "Error..."
     return render(request, 'index.html', {'ticker': ticker, 'output': output})
 
-
-
 def search(request,symb):
     if request.method == 'POST':
         ticker = request.POST['ticker']
@@ -47,11 +45,7 @@ def search(request,symb):
         return render(request,'search.html', {'ticker': "Enter the symbol above"})
 
 
-def about(request):
-    api_request = requests.get(
-        'https://stocknewsapi.com/api/v1/category?section=general&items=50&token=zoiv7dexarnbjd4anbtduzucjw5bdjk5xxqpd93d')
-    api1 = json.loads(api_request.content)
-    return render(request, 'about.html', {'api1': api1})
+
 
 def add_stock(request):
     import requests
@@ -88,3 +82,7 @@ def delete(request):
     ticker = Stock.objects.all()
     return render(request, 'delete.html', {'ticker':ticker})
 
+def about(request):
+    request_api = requests.get('https://stocknewsapi.com/api/v1/category?section=general&items=50&token=zoiv7dexarnbjd4anbtduzucjw5bdjk5xxqpd93d')
+    news_api = json.loads(request_api.content)
+    return render(request, 'about.html', {'news_api' : news_api})
