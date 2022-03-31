@@ -47,7 +47,7 @@ def search(request,symb):
 
 
 
-def add_stock(request):
+def watchlist(request):
     import requests
     import json
 
@@ -57,7 +57,7 @@ def add_stock(request):
         if form.is_valid():
             form.save()
             messages.success(request,("Stock has been added!"))
-            return redirect('add_stock')
+            return redirect('watchlist')
     else:
         ticker = Stock.objects.all()
         output = []
@@ -69,7 +69,7 @@ def add_stock(request):
                 output.append(api)
             except Exception as e:
                 api = "Error..."
-        return render(request, 'add_stock.html', {'ticker' : ticker, 'output': output})
+        return render(request, 'watchlist.html', {'ticker' : ticker, 'output': output})
 
 
 def delete_stock(request, stock_id):
