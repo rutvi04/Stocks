@@ -19,6 +19,12 @@
         52Wk Low: {{ api.week52Low }}<br/>
         <div>
         <br/><br/>
+        <form action="{% url 'watchlist' %}" method="POST" class="d-flex" >
+          {% csrf_token %}
+            <input type="hidden" name="ticker" class="form-control" value="{{ api.symbol }}">
+            <button class="btn btn-outline-success" type="submit">Add To Watchlist</button>
+        </form>
+
         </div>
 
     {% endif %}
