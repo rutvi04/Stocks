@@ -18,10 +18,10 @@
       <th scope="col">Company Name</th>
       <th scope="col">Stock Price</th>
       <th scope="col">Previous Close</th>
-      <th scope="col">Market Cap</th>
       <th scope="col">YTD Change</th>
       <th scope="col">52wk High</th>
       <th scope="col">52wk Low</th>
+      <th scope="col">Buy Now</th>
 
     </tr>
   </thead>
@@ -32,10 +32,12 @@
               <td>{{ list_items.companyName }}</td>
               <td>{{ list_items.latestPrice }}</td>
                <td>{{ list_items.previousClose }}</td>
-              <td>{{ list_items.marketCap }}</td>
               <td>{{ list_items.ytdChange }}</td>
               <td>{{ list_items.week52High }}</td>
               <td>{{ list_items.week52Low }}</td>
+              <td>
+
+                  <button  name= "ticker" class="btn btn-outline-success" type="submit"><a href="{% url 'buy_stock' %}" method="post">Buy</a></button></td>
 
           </tr>
 

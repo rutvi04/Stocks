@@ -6,3 +6,11 @@ class Stock(models.Model):
 
     def __str__(self):
         return self.ticker
+
+class my_stocks(models.Model):
+    stock_symbol= models.TextField()
+    quantity = models.PositiveIntegerField(default=0, blank= False)
+
+
+
+

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form method="post" >
+ {% csrf_token %}
+    <input type="number" name="Quantity">Enter the Quantity</input>
+    <p>Price:{{ api.latestPrice }}</p>
+    <p>Total Funds:{{ total_funds }}</p>
+    <p>Available Balance:{{ availableBalance }}</p>
+    <button class="btn btn-outline-success" type="submit">Buy the Stock</button>
+
+</form>
+{% endblock %}

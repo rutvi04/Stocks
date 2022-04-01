@@ -1,8 +1,8 @@
 import pandas as pd
 from django.shortcuts import render,redirect
 from django.http import HttpResponse, HttpRequest
-from .models import Stock
-from .forms import StockForm
+from .models import Stock, my_stocks
+from .forms import StockForm, BuyForm
 from django.contrib import messages
 import requests
 import json
@@ -21,7 +21,7 @@ def index(request):
                 api = "Error..."
     return render(request, 'index.html', {'ticker': ticker, 'output': output})
 
-def search(request,symb):
+def search(request):
     if request.method == 'POST':
         ticker = request.POST['ticker']
         api_request = requests.get(
@@ -32,8 +32,9 @@ def search(request,symb):
             api = "Error..."
         return render(request, 'search.html', {'api': api, 'ticker': ticker})
         # pk_5d448bc5ec78430f9f18a309b283a812ch
-    elif symb:
-        ticker = symb
+
+    elif request.method == 'GET':
+        ticker=request.GET['ticker']
         api_request = requests.get(
             "https://cloud.iexapis.com/stable/stock/" + ticker + "/quote?token=pk_0dff57f16e54425eb2601c2a89a23edf")
         try:
@@ -43,9 +44,6 @@ def search(request,symb):
         return render(request, 'search.html', {'api': api, 'ticker': ticker})
     else:
         return render(request,'search.html', {'ticker': "Enter the symbol above"})
-
-
-
 
 def watchlist(request):
     import requests
@@ -86,3 +84,27 @@ def about(request):
     request_api = requests.get('https://stocknewsapi.com/api/v1/category?section=general&items=50&token=zoiv7dexarnbjd4anbtduzucjw5bdjk5xxqpd93d')
     news_api = json.loads(request_api.content)
     return render(request, 'about.html', {'news_api' : news_api})
+
+def myportfolio(request):
+    return render(request, 'myportfolio.html', {})
+
+def buy_stock(request):
+    if request.method == 'POST':
+        form = BuyForm(request.POST or None)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request,("Stock has been added!"))
+            return redirect('myportfolio')
+    else:
+        ticker = Stock.objects.all()
+        output = []
+        for ticker_items in ticker:
+            api_request = requests.get(
+                "https://cloud.iexapis.com/stable/stock/" + str(ticker_items) + "/quote?token=pk_0dff57f16e54425eb2601c2a89a23edf")
+            try:
+                api = json.loads(api_request.content)
+                output.append(api)
+            except Exception as e:
+                api = "Error..."
+        return render(request, 'myportfolio.html.html', {'ticker' : ticker, 'output': output})

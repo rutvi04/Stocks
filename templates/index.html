@@ -42,8 +42,10 @@
   {% if ticker %}
       {% for list_items in output %}
           <tr>
-
-              <td><a href="{% url 'search' list_items.symbol %}">{{ list_items.companyName }}</a></td>
+              <form action="{% url 'search' %}" method="get">
+              <td><a type="button" href="{% url 'search' %}?ticker={{ list_items.symbol }}">{{ list_items.companyName }}</a></td>
+                  <input name="ticker" type="hidden" value={{ list_items.symbol }}>
+              </form>
               <td>{{ list_items.latestPrice }}</td>
               <td>{{ list_items.marketCap }}</td>
           </tr>
