@@ -3,7 +3,7 @@
 
 
 {% block content %}
-	<h1>Market News</h1><br/>
+    <h1><b><u>Market News</u></b></h1><br/>
 
 <div class="container">
 	<div class="row">
@@ -26,12 +26,5 @@
 </div>
     <br/>
 
-	<ul>
-		{% for x in news_api.data %}
-			<li>{{ x.title }}</li>
-		{% endfor %}
-	</ul>
-
-	{{ news_api.data }}
 
 {% endblock %}

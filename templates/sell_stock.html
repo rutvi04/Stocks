@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Sell the Stock</h1>
+<form action="{% url 'myportfolio' %}" method="post" >
+ {% csrf_token %}
+
+    <p>{{ symbol }} - {{ api.companyName }}</p>
+    <input type="number" name="quantity" >Enter the Quantity</input>
+    <input type="hidden" name="latest_price" value="{{ api.latestPrice }}">
+    <input type="hidden" name="symbol" value="{{ symbol }}">
+    <p>Price:{{ api.latestPrice }}</p>
+    <p>Available Balance:{{ availableBal }}</p>
+    <button class="btn btn-outline-success" type="submit">Sell the Stock</button>
+
+</form>
+{% endblock %}

@@ -4,7 +4,6 @@
 <title>Watchlist</title>
 
 <h1><b>Your Watchlist</b></h1><br/>
-
       <form action="{% url 'watchlist' %}" method="POST" class="d-flex" >
           {% csrf_token %}
         <input name="ticker" class="form-control me-2" type="search" placeholder="Add Ticker To Page" aria-label="Search">
@@ -25,6 +24,7 @@
     </tr>
   </thead>
   <tbody>
+
   {% if ticker %}
       {% for list_items in output %}
           <tr>
@@ -34,6 +34,7 @@
               <td>{{ list_items.ytdChange }}</td>
               <td>{{ list_items.week52High }}</td>
               <td>{{ list_items.week52Low }}</td>
+
               <form action="{% url 'buy_stock' %}" method="post">
                   {% csrf_token %}
                   <input type="hidden" name="symbol" class="form-control" value="{{ list_items.symbol }}">

@@ -57,6 +57,7 @@ def watchlist(request):
             form.save()
             messages.success(request,("Stock has been added!"))
             return redirect('watchlist')
+
     else:
         ticker = Stock.objects.all()
         output = []
@@ -72,8 +73,8 @@ def watchlist(request):
 
 
 def delete_stock(request, stock_id):
-    item = Stock.objects.get(pk=stock_id)
-    item.delete()
+    list_items = Stock.objects.get(pk=stock_id)
+    list_items.delete()
     messages.success(request, ("Stock has been deleted!"))
     return redirect(delete)
 
@@ -170,6 +171,16 @@ def buy_stock(request):
             api = "Error..."
         return render(request, 'buy_stock.html', {'api': api, 'symbol': symbol, 'availableBal': 30000})
 
+def sell_stock(request):
+    if request.method == 'POST':
+        symbol = request.POST['symbol']
+        api_request = requests.get(
+            "https://cloud.iexapis.com/stable/stock/" + symbol + "/quote?token=pk_0dff57f16e54425eb2601c2a89a23edf")
+        try:
+            api = json.loads(api_request.content)
+        except Exception as e:
+            api = "Error..."
+        return render(request, 'sell_stock.html', {'api': api, 'symbol': symbol, 'availableBal': 30000})
 #def quantity(request):
   #  if request.method == 'POST':
   #      quantity = request.POST['quantity']
