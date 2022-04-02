@@ -86,16 +86,13 @@ def about(request):
     return render(request, 'about.html', {'news_api' : news_api})
 
 def myportfolio(request):
-    return render(request, 'myportfolio.html', {})
-
-def buy_stock(request):
     if request.method == 'POST':
-        form = BuyForm(request.POST or None)
+        form = StockForm(request.POST or None)
 
         if form.is_valid():
             form.save()
-            messages.success(request,("Stock has been added!"))
-            return redirect('myportfolio')
+            messages.success(request,("Stock has been added to the holding"))
+            return redirect('watchlist')
     else:
         ticker = Stock.objects.all()
         output = []
@@ -107,4 +104,37 @@ def buy_stock(request):
                 output.append(api)
             except Exception as e:
                 api = "Error..."
-        return render(request, 'myportfolio.html.html', {'ticker' : ticker, 'output': output})
+        return render(request, 'watchlist.html', {'ticker' : ticker, 'output': output})
+
+    return render(request, 'myportfolio.html', {})
+
+def buy_stock(request):
+        form = BuyForm(request.POST or None)
+        total_funds = quantity()
+        availableBalance = 2000
+        if form.is_valid():
+            form.save()
+            if availableBalance > total_funds:
+                messages.success(request,("Stock has been added to your Holding"))
+                return render(request, 'myportfolio.html', {'total_funds': total_funds, 'availableBalance': availableBalance})
+            else:
+                messages.success(request,("You do not have enough balance"))
+                return render(request, 'buy_stock.html', {})
+        else:
+            form = BuyForm()
+            return render(request, 'buy_stock.html', {})
+
+def buy(request):
+    if request.method == 'POST':
+        company_name = request.POST['company_name']
+        latest_price = request.POST['latest_price']
+        return render(request, 'buy_stock.html',{'company_name': company_name, 'latest_price': latest_price})
+
+def quantity(request):
+    if request.method == 'POST':
+        quantity = request.POST['quantity']
+        latest_price = request.POST['latest_price']
+        total_funds = quantity * latest_price
+        return redirect(buy_stock('total_funds'))
+
+

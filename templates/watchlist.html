@@ -35,10 +35,12 @@
               <td>{{ list_items.ytdChange }}</td>
               <td>{{ list_items.week52High }}</td>
               <td>{{ list_items.week52Low }}</td>
-              <td>
-
-                  <button  name= "ticker" class="btn btn-outline-success" type="submit"><a href="{% url 'buy_stock' %}" method="post">Buy</a></button></td>
-
+              <form action="{% url 'buy' %}" method="post">
+                  {% csrf_token %}
+                  <input type="hidden" name="company_name" class="form-control" value="{{ list_items.companyName }}">
+                  <input type="hidden" name="latest_price" class="form-control" value="{{ list_items.latestPrice }}">
+              <td><button  class="btn btn-outline-success" type="submit">Buy</button></td>
+              </form>
           </tr>
 
       {% endfor %}

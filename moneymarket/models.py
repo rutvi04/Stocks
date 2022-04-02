@@ -14,3 +14,5 @@ class my_stocks(models.Model):
 
 
 
+
+
