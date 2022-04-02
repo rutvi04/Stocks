@@ -9,8 +9,8 @@ urlpatterns = [
     path('delete/<stock_id>', views.delete_stock, name='delete_stock'),
     path('about/', views.about, name='about'),
     path('buy_stock.html', views.buy_stock, name='buy_stock'),
-    path('buy/', views.buy, name='buy'),
-    path('quantity/', views.quantity, name='quantity'),
+    # path('buy/', views.buy, name='buy'),
+   # path('quantity/', views.quantity, name='quantity'),
     path('myportfolio.html', views.myportfolio, name= 'myportfolio')
 
 

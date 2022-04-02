@@ -9,12 +9,12 @@ class StockForm (forms.ModelForm):
 class BuyForm(forms.ModelForm):
     class Meta:
         model =my_stocks
-        fields = ['stock_symbol','quantity']
+        fields = ['quantity',]
         widget = {
-            'stock_symbol': forms.TextInput,
+          #  'stock_symbol': forms.TextInput,
             'quantity': forms.IntegerField
         }
         labels = {
-            'stock_symbol': 'Stock Symbol',
+           # 'stock_symbol': 'Stock Symbol',
             'quantity': 'Total Quantity'
         }

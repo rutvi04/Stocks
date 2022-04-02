@@ -1,19 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<form action="{% url 'buy_stock' %}" method="post" >
+<form action="{% url 'myportfolio' %}" method="post" >
  {% csrf_token %}
 
-    <p>{{ company_name }}</p>
+    <p>{{ symbol }} - {{ api.companyName }}</p>
     <input type="number" name="quantity" >Enter the Quantity</input>
-    <input type="hidden" name="latest_price" value="{{ latest_price }}">
-    <p>Price:{{ latest_price }}</p>
-
-    <p>Available Balance:</p>
-   <form action="{% url 'myportfolio' %}" method="POST" class="d-flex" >
-          {% csrf_token %}
-       <button class="btn btn-outline-success" type="submit">Add to Watchlist</button>
-      </form>
+    <input type="hidden" name="latest_price" value="{{ api.latestPrice }}">
+    <input type="hidden" name="symbol" value="{{ symbol }}">
+    <p>Price:{{ api.latestPrice }}</p>
+    <p>Available Balance:{{ availableBal }}</p>
+    <button class="btn btn-outline-success" type="submit">Buy the Stock</button>
 
 </form>
 {% endblock %}
