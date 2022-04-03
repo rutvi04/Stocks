@@ -66,7 +66,7 @@ def watchlist(request):
             return redirect('watchlist')
 
     else:
-        ticker = Stock.objects.all()
+        ticker = Stock.objects.filter(author = request.user)
         output = []
         for ticker_items in ticker:
             api_request = requests.get(
@@ -86,7 +86,7 @@ def delete_stock(request, stock_id):
     return redirect(delete)
 
 def delete(request):
-    ticker = Stock.objects.all()
+    ticker = Stock.objects.filter(author = request.user)
     return render(request, 'delete.html', {'ticker':ticker})
 
 def about(request):
