@@ -5,6 +5,11 @@ from .models import Stock, my_stocks
 from .forms import StockForm, BuyForm
 from django.contrib import messages
 
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth import login, authenticate
+from .forms import SignupForm, ProfileForm
+from django.urls import reverse_lazy
+from django.views import generic
 import requests
 import json
 # Create your views here.
@@ -215,5 +220,63 @@ def sell_stock(request):
   #      latest_price = request.POST['latest_price']
   #      total_funds = quantity * latest_price
   #      return redirect(buy_stock('total_funds'))
+
+def signup(request):
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        profile_form = ProfileForm(request.POST)
+        if form.is_valid() and profile_form.is_valid():
+            user = form.save()
+            profile= profile_form.save(commit=False)
+            profile.user = user
+
+            profile.save()
+
+            username = form.cleaned_data.get('username')
+            pwd = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=pwd)
+            login(request, user)
+            return redirect('index')
+        else:
+            note = form.errors
+            return render(request, 'registration/signup.html', {'note': note})
+    else:
+        form = SignupForm
+        profile_form = ProfileForm()
+        note = form.errors
+        return render(request, 'registration/signup.html', {'form': form, 'note':note, 'profile_form': profile_form})
+
+
+
+# @login_required
+# @transaction.atomic
+#def profile(request):
+ #   if request.method == 'POST':
+  #      user_form = SignupForm(request.POST, instance=request.user)
+  #      profile_form = ProfileForm(request.POST, instance=request.user.profile)
+  #      if user_form.is_valid() and profile_form.is_valid():
+  #          user_form.save()
+  #          profile_form.save()
+  #          messages.success(request, _('Your profile was successfully updated!'))
+  #          return redirect('settings:profile')
+ #       else:
+ #           messages.error(request, _('Please correct the error below.'))
+ #   else:
+ #       user_form = SignupForm(instance=request.user)
+#    return render(request, 'profile.html', {
+      #  'user_form': user_form,
+       # 'profile_form': profile_form
+#    })
+#
+
+class UserEditView(generic.UpdateView):
+    form_class = UserChangeForm
+    profile_form = ProfileForm
+    template_name = "registration/edit_profile.html"
+    success_url = reverse_lazy('index')
+
+
+    def get_object(self):
+        return self.request.user
 
 

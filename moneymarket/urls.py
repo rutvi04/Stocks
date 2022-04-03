@@ -12,7 +12,10 @@ urlpatterns = [
     path('sell_stock.html', views.sell_stock, name='sell_stock'),
     # path('buy/', views.buy, name='buy'),
    # path('quantity/', views.quantity, name='quantity'),
-    path('myportfolio.html', views.myportfolio, name= 'myportfolio')
+    path('myportfolio.html', views.myportfolio, name= 'myportfolio'),
+    path('edit_profile/', UserEditView.as_view(), name='edit_profile'),
+    path('accounts/signup',views.signup,name='signup'),
+
 
 
 ]
