@@ -2,18 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
-class Stock(models.Model):
-    ticker = models.CharField(max_length=10)
-
-    def __str__(self):
-        return self.ticker
-
-class my_stocks(models.Model):
-    stock_symbol= models.TextField()
-    quantity = models.PositiveIntegerField(default=0, blank= False)
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, related_name='uid', on_delete=models.CASCADE)
     # name = models.CharField(max_length=50)
     UID = models.CharField(primary_key='True', max_length=15)
     # email = models.EmailField(blank='False')
@@ -32,5 +23,14 @@ class Profile(models.Model):
         return str(self.user)
 
 
+class Stock(models.Model):
+    ticker = models.CharField(max_length=10)
+    author = models.ForeignKey(User, related_name='uid_stock', on_delete=models.CASCADE, default=None)
 
+    def __str__(self):
+        return self.ticker
 
+class my_stocks(models.Model):
+    stock_symbol= models.TextField()
+    quantity = models.PositiveIntegerField(default=0, blank= False)
+    my_author = models.ForeignKey(User, related_name='uid_my_stock', on_delete=models.CASCADE, default=None)

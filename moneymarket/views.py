@@ -59,7 +59,9 @@ def watchlist(request):
         form = StockForm(request.POST or None)
 
         if form.is_valid():
-            form.save()
+            instance = form.save(commit=False)
+            instance.author = request.user
+            instance.save()
             messages.success(request,("Stock has been added!"))
             return redirect('watchlist')
 
@@ -111,7 +113,9 @@ def myportfolio(request):
             buyAmount = float(quantity)*float(latest_price)
             if availableBal >= buyAmount:
                 availableBal -= buyAmount
-                form.save()
+                instance = form.save(commit=False)
+                instance.my_author = request.user
+                instance.save()
                 messages.success(request, ("You have bought the stock!"))
                 return render(request, 'myportfolio.html', {'buyAmount': buyAmount , 'availableBal': availableBal, 'symbol': symbol, 'api': api})
             else:
@@ -137,7 +141,9 @@ def myportfolio(request):
             sellAmount = float(quantity)*float(latest_price)
             if buyAmount >= sellAmount:
                 availableBal += sellAmount
-                form.save()
+                instance = form.save(commit=False)
+                instance.my_author = request.user
+                instance.save()
                 messages.success(request, ("You have sold the stock!"))
                 return render(request, 'myportfolio.html', {'buyAmount': buyAmount , 'availableBal': availableBal, 'symbol': symbol, 'api': api})
             else:
