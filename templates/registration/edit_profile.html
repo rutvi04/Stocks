@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<main class="container my-4">
+
+	<h3 class="my-4 border-bottom pb-1">Profile</h3>
+    <p> {{ note }}  </p>
+	<table class="table table-bordered">
+		<form  method="post" enctype="multipart/form-data">
+			{% csrf_token %}
+
+            {{user_form.as_table}}
+            {{ profile_form.as_table }}
+			<tr>
+				<td colspan="2">
+					<button type="submit" class="btn btn-outline-info">Update</button>
+				</td>
+			</tr>
+		</form>
+	</table>
+</main>
+{% endblock %}
