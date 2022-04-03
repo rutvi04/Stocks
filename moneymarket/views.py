@@ -122,6 +122,32 @@ def myportfolio(request):
             messages.error(request,("Please enter valid values"))
             return render(request, 'buy_stock.html', {'BuyForm' : newform, 'note': note,'symbol': symbol, 'api': api, 'availableBal': availableBal})
 
+    elif request.method == 'POST':
+        form = BuyForm(request.POST)
+        buyAmount = 30000
+        if form.is_valid():
+            quantity = request.POST['quantity']
+            latest_price = request.POST['latest_price']
+
+            sellAmount = float(quantity)*float(latest_price)
+            if buyAmount >= sellAmount:
+                availableBal += sellAmount
+                form.save()
+                messages.success(request, ("You have sold the stock!"))
+                return render(request, 'myportfolio.html', {'buyAmount': buyAmount , 'availableBal': availableBal, 'symbol': symbol, 'api': api})
+            else:
+
+                newform = BuyForm()
+
+                messages.success(request,("You don't have sufficient balance!"))
+                return render(request,'sell_stock.html',{'BuyForm' : newform,'symbol': symbol, 'api': api,'buyAmount': buyAmount})
+
+        else:
+            newform = BuyForm()
+            note = form.errors
+            messages.error(request,("Please enter valid values"))
+            return render(request, 'sell_stock.html', {'BuyForm' : newform, 'note': note,'symbol': symbol, 'api': api, 'buyAmount': buyAmount})
+
     else:
         form = BuyForm()
         return render(request,'buy_stock.html', {'BuyForm': form, 'symbol': symbol, 'api': api, 'availableBal': availableBal})
@@ -180,7 +206,9 @@ def sell_stock(request):
             api = json.loads(api_request.content)
         except Exception as e:
             api = "Error..."
-        return render(request, 'sell_stock.html', {'api': api, 'symbol': symbol, 'availableBal': 30000})
+        return render(request, 'sell_stock.html', {'api': api, 'symbol': symbol, 'buyAmount': 30000})
+
+
 #def quantity(request):
   #  if request.method == 'POST':
   #      quantity = request.POST['quantity']

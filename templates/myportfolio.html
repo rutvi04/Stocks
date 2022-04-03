@@ -25,7 +25,7 @@
         <th scope="col">From Database</th>
         <th scope="col">From Database</th>
         <th scope="col">From Database</th>
-        <form action="{% url 'buy_stock' %}" method="post">
+        <form action="{% url 'sell_stock' %}" method="post">
             {% csrf_token %}
             <input type="hidden" name="symbol" class="form-control" value="{{ api.symbol }}">
         <td><button  class="btn btn-outline-success" type="submit">Sell Now</button></td>
@@ -39,13 +39,7 @@
               <td>{{ list_items.companyName }}</td>
               <td>{{ list_items.latestPrice }}</td>
                <td>{{ list_items.previousClose }}</td>
-               <form action="{% url 'sell_stock' %}" method="post">
-                  {% csrf_token %}
-                  <input type="hidden" name="symbol" class="form-control" value="{{ list_items.symbol }}">
-                  <input type="hidden" name="company_name" class="form-control" value="{{ list_items.companyName }}">
-                  <input type="hidden" name="latest_price" class="form-control" value="{{ list_items.latestPrice }}">
-              <td><button  class="btn btn-outline-success" type="submit">Sell</button></td>
-              </form>
+
           </tr>
 
       {% endfor %}
