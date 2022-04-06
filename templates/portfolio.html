@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h1 style="text-align: center;border: 1px; border-color: black"><u><b>Holding Statement</b></u></h1><br/><br/>
+
+
+<table class="table table-striped table-hover">
+  <thead class="table-dark">
+    <tr>
+      <th scope="col">Company Symbol</th>
+      <th scope="col">Purchased Date</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Buying Price</th>
+
+
+
+    </tr>
+  </thead>
+  <tbody>
+
+      {% for holding in holding_list %}
+          <tr>
+              <td>{{ holding.stock_symbol }}</td>
+              <td>{{ holding.date }}</td>
+              <td>{{ holding.quantity }}</td>
+               <td>{{ holding.price}}</td>
+
+          </tr>
+
+      {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

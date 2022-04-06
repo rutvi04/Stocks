@@ -1,15 +1,16 @@
 import pandas as pd
 from django.shortcuts import render,redirect
 from django.http import HttpResponse, HttpRequest
-from .models import Stock, my_stocks
+
 from .forms import StockForm, BuyForm
 from django.contrib import messages
-
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth import login, authenticate
 from .forms import SignupForm, ProfileForm
 from django.urls import reverse_lazy
 from django.views import generic
+from .models import Profile,Stock, my_stocks, User
 import requests
 import json
 # Create your views here.
@@ -34,9 +35,13 @@ def search(request):
             "https://cloud.iexapis.com/stable/stock/" + ticker + "/quote?token=pk_0dff57f16e54425eb2601c2a89a23edf")
         try:
             api = json.loads(api_request.content)
+            return render(request, 'search.html', {'api': api, 'ticker': ticker})
+
         except Exception as e:
             api = "Error..."
-        return render(request, 'search.html', {'api': api, 'ticker': ticker})
+            messages.error(request,("Please enter valid symbol"))
+            return redirect('index')
+
         # pk_5d448bc5ec78430f9f18a309b283a812ch
 
     elif request.method == 'GET':
@@ -59,10 +64,19 @@ def watchlist(request):
         form = StockForm(request.POST or None)
 
         if form.is_valid():
-            instance = form.save(commit=False)
-            instance.author = request.user
-            instance.save()
-            messages.success(request,("Stock has been added!"))
+            ticker = request.POST['ticker']
+            api_request = requests.get(
+                "https://cloud.iexapis.com/stable/stock/" + ticker + "/quote?token=pk_0dff57f16e54425eb2601c2a89a23edf")
+            try:
+                api = json.loads(api_request.content)
+                instance = form.save(commit=False)
+                instance.author = request.user
+                instance.save()
+                messages.success(request, ("Stock has been added!"))
+
+            except Exception as e:
+                api = "Error..."
+                messages.error(request,("Enter Valid Symbol"))
             return redirect('watchlist')
 
     else:
@@ -75,6 +89,7 @@ def watchlist(request):
                 api = json.loads(api_request.content)
                 output.append(api)
             except Exception as e:
+
                 api = "Error..."
         return render(request, 'watchlist.html', {'ticker' : ticker, 'output': output})
 
@@ -89,35 +104,72 @@ def delete(request):
     ticker = Stock.objects.filter(author = request.user)
     return render(request, 'delete.html', {'ticker':ticker})
 
-def about(request):
+def news(request):
     request_api = requests.get('https://stocknewsapi.com/api/v1/category?section=general&items=50&token=zoiv7dexarnbjd4anbtduzucjw5bdjk5xxqpd93d')
     news_api = json.loads(request_api.content)
-    return render(request, 'about.html', {'news_api' : news_api})
+    return render(request, 'news.html', {'news_api' : news_api})
+
+def buy_stock(request):
+    if request.method == 'POST':
+        symbol = request.POST['symbol']
+        latest_price = float(request.POST['latest_price'])
+       # quantity = float(my_stocks.objects.get(my_author=request.user).quantity)
+
+        availableBal= Profile.objects.get(user=request.user).available_bal
+        # available_bal = available_bal- (latest_price*quantity)
+
+        api_request = requests.get(
+            "https://cloud.iexapis.com/stable/stock/" + symbol + "/quote?token=pk_0dff57f16e54425eb2601c2a89a23edf")
+        try:
+            api = json.loads(api_request.content)
+        except Exception as e:
+            api = "Error..."
+        return render(request, 'buy_stock.html', {'api': api, 'symbol': symbol,'availableBal':availableBal})
+    else:
+        messages.error(request,("Errorr"))
+        return render(request,'watchlist.html', {})
+
 
 def myportfolio(request):
-    symbol = request.POST['symbol']
+    symbol = request.POST['stock_symbol']
+    list_stock= []
+    #availableBal = Profile.objects.get(user=request.user).available_bal
     api_request = requests.get(
         "https://cloud.iexapis.com/stable/stock/" + symbol + "/quote?token=pk_0dff57f16e54425eb2601c2a89a23edf")
     try:
         api = json.loads(api_request.content)
     except Exception as e:
         api = "Error..."
-    availableBal = 30000
     if request.method == 'POST':
         form = BuyForm(request.POST)
 
         if form.is_valid():
             quantity = request.POST['quantity']
             latest_price = request.POST['latest_price']
-
+            #quantity = my_stocks.objects.get(my_author=request.user).quantity
+            availableBal = Profile.objects.get(user=request.user).available_bal
+            #availableBal = 20000
             buyAmount = float(quantity)*float(latest_price)
             if availableBal >= buyAmount:
                 availableBal -= buyAmount
+                P = Profile.objects.get(user=request.user)
+                P.available_bal = availableBal
+                P.save()
+                #ms = my_stocks.objects.get(my_author=request.user)
+
+               # Profile.objects.filter(user=(Profile.objects.get(user=request.user))).update(available_bal = 'availableBal')
+               # Profile.objects.get(user=request.user).update(available_bal = 'availableBal')
+
+               # availableBal.save(update_fields=['available_bal'])
+
                 instance = form.save(commit=False)
+                instance.stock_symbol = symbol
                 instance.my_author = request.user
+                instance.price = latest_price
                 instance.save()
                 messages.success(request, ("You have bought the stock!"))
-                return render(request, 'myportfolio.html', {'buyAmount': buyAmount , 'availableBal': availableBal, 'symbol': symbol, 'api': api})
+                context = {'buyAmount': buyAmount , 'availableBal': availableBal, 'symbol': symbol, 'api': api,'quantity': quantity,'list_stock': list_stock}
+                return render(request, 'myportfolio.html', context)
             else:
 
                 newform = BuyForm()
@@ -127,40 +179,13 @@ def myportfolio(request):
 
         else:
             newform = BuyForm()
+            availableBal = Profile.objects.get(user=request.user).available_bal
             note = form.errors
             messages.error(request,("Please enter valid values"))
             return render(request, 'buy_stock.html', {'BuyForm' : newform, 'note': note,'symbol': symbol, 'api': api, 'availableBal': availableBal})
-
-    elif request.method == 'POST':
-        form = BuyForm(request.POST)
-        buyAmount = 30000
-        if form.is_valid():
-            quantity = request.POST['quantity']
-            latest_price = request.POST['latest_price']
-
-            sellAmount = float(quantity)*float(latest_price)
-            if buyAmount >= sellAmount:
-                availableBal += sellAmount
-                instance = form.save(commit=False)
-                instance.my_author = request.user
-                instance.save()
-                messages.success(request, ("You have sold the stock!"))
-                return render(request, 'myportfolio.html', {'buyAmount': buyAmount , 'availableBal': availableBal, 'symbol': symbol, 'api': api})
-            else:
-
-                newform = BuyForm()
-
-                messages.success(request,("You don't have sufficient balance!"))
-                return render(request,'sell_stock.html',{'BuyForm' : newform,'symbol': symbol, 'api': api,'buyAmount': buyAmount})
-
-        else:
-            newform = BuyForm()
-            note = form.errors
-            messages.error(request,("Please enter valid values"))
-            return render(request, 'sell_stock.html', {'BuyForm' : newform, 'note': note,'symbol': symbol, 'api': api, 'buyAmount': buyAmount})
-
     else:
         form = BuyForm()
+        availableBal = Profile.objects.get(user=request.user).available_bal
         return render(request,'buy_stock.html', {'BuyForm': form, 'symbol': symbol, 'api': api, 'availableBal': availableBal})
 
 
@@ -197,27 +222,31 @@ def myportfolio(request):
   #          form = BuyForm()
   #          return render(request, 'buy_stock.html', {})
 
-def buy_stock(request):
+def add_fund(request):
     if request.method == 'POST':
-        symbol = request.POST['symbol']
-        api_request = requests.get(
-            "https://cloud.iexapis.com/stable/stock/" + symbol + "/quote?token=pk_0dff57f16e54425eb2601c2a89a23edf")
-        try:
-            api = json.loads(api_request.content)
-        except Exception as e:
-            api = "Error..."
-        return render(request, 'buy_stock.html', {'api': api, 'symbol': symbol, 'availableBal': 30000})
+        availableBal = Profile.objects.get(user=request.user).available_bal
 
-def sell_stock(request):
-    if request.method == 'POST':
-        symbol = request.POST['symbol']
-        api_request = requests.get(
-            "https://cloud.iexapis.com/stable/stock/" + symbol + "/quote?token=pk_0dff57f16e54425eb2601c2a89a23edf")
-        try:
-            api = json.loads(api_request.content)
-        except Exception as e:
-            api = "Error..."
-        return render(request, 'sell_stock.html', {'api': api, 'symbol': symbol, 'buyAmount': 30000})
+
+        availableBal += float(request.POST['amount'])
+        Profile.objects.filter(user=request.user).update(available_bal=availableBal)
+
+        messages.success(request, ("Fund has been added!"))
+        return render(request,'add_fund.html', {'availableBal': availableBal})
+    else:
+        availableBal = Profile.objects.get(user=request.user).available_bal
+        # messages.error(request,("Something went wrong. Sorry!!"))
+
+        return render(request,'add_fund.html',{'availableBal':availableBal})
+   #if request.method == 'POST':
+        #P = Profile.objects.get(user=request.user)
+
+        #available_bal = P.available_bal
+
+        #return render(request,'add_fund.html', {'available_bal': available_bal, 'static': 40000})
+        # return redirect('index')
+    #else:
+        #return redirect('watchlist')"""
+
 
 
 #def quantity(request):
@@ -230,59 +259,51 @@ def sell_stock(request):
 def signup(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)
-        profile_form = ProfileForm(request.POST)
+        profile_form = ProfileForm(request.POST, request.FILES)
         if form.is_valid() and profile_form.is_valid():
             user = form.save()
             profile= profile_form.save(commit=False)
             profile.user = user
-
+            img_obj = profile_form.instance
             profile.save()
-
             username = form.cleaned_data.get('username')
             pwd = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=pwd)
             login(request, user)
             return redirect('index')
         else:
-            note = form.errors
-            return render(request, 'registration/signup.html', {'note': note})
+            form = SignupForm()
+            profile_form = ProfileForm
+            messages.error(request,("Please enter valid details"))
+            return render(request, 'registration/signup.html', {'form': form, 'profile_form': profile_form})
     else:
-        form = SignupForm
+        form = SignupForm()
         profile_form = ProfileForm()
-        note = form.errors
-        return render(request, 'registration/signup.html', {'form': form, 'note':note, 'profile_form': profile_form})
+        return render(request, 'registration/signup.html', {'form': form, 'profile_form': profile_form})
 
 
-
-# @login_required
 # @transaction.atomic
-#def profile(request):
- #   if request.method == 'POST':
-  #      user_form = SignupForm(request.POST, instance=request.user)
-  #      profile_form = ProfileForm(request.POST, instance=request.user.profile)
-  #      if user_form.is_valid() and profile_form.is_valid():
-  #          user_form.save()
-  #          profile_form.save()
-  #          messages.success(request, _('Your profile was successfully updated!'))
-  #          return redirect('settings:profile')
- #       else:
- #           messages.error(request, _('Please correct the error below.'))
- #   else:
- #       user_form = SignupForm(instance=request.user)
-#    return render(request, 'profile.html', {
-      #  'user_form': user_form,
-       # 'profile_form': profile_form
-#    })
-#
+@login_required
+def profile(request):
+    if request.method == 'POST':
+        user_form = SignupForm(request.POST, instance=request.user)
+        profile_form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, 'Your profile was successfully updated!')
+            return redirect('edit_profile')
+    # else:
+            # messages.error(request, _('Please correct the error below.'))
+    else:
+        user_form = SignupForm(instance=request.user)
+        profile_form = ProfileForm(instance=request.user.profile)
+        context = {'user_form': user_form,'profile_form': profile_form,'available_bal': Profile.objects.get(user=request.user).available_bal, 'invested_bal': Profile.objects.get(user=request.user).invested_bal}
+    return render(request, 'registration/edit_profile.html', context)
 
-class UserEditView(generic.UpdateView):
-    form_class = UserChangeForm
-    profile_form = ProfileForm
-    template_name = "registration/edit_profile.html"
-    success_url = reverse_lazy('index')
+def portfolio(request):
 
-
-    def get_object(self):
-        return self.request.user
-
-
+    holding_list = my_stocks.objects.filter(my_author=request.user)
+    #buy_list = []
+    #for holding in holding_list:
+    return render(request,'portfolio.html',{'holding_list': holding_list})

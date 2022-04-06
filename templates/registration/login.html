@@ -10,11 +10,12 @@
 			{{form.as_table}}
 			<tr>
 				<td colspan="2">
-					<input type="submit" value="Login" class="btn btn-primary" />
+					<input type="submit" value="Login" class="btn btn-outline-success" />
 				</td>
 			</tr>
 		</form>
 	</table>
+
 	<p><a href="{% url 'password_reset' %}" class="text-danger">Reset Password?</a></p>
 	<p>If you are not registred, Please <a href="{% url 'signup' %}">Signup here</a>.</p>
 </main>

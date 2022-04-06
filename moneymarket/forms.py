@@ -1,5 +1,5 @@
 from django import forms
-from .models import Stock,my_stocks, User, Profile
+from .models import Stock, my_stocks, User, Profile
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
@@ -32,5 +32,5 @@ class SignupForm(UserCreationForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ('UID', 'address', 'demat_ac', 'bank_ac', 'gender')
+        fields = ('UID','idProof', 'address', 'demat_ac', 'bank_ac', 'gender')
 

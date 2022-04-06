@@ -1,18 +1,23 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
-
-    <h1><b><u>Buy the Stock</u></b></h1><br/><br/>
-<form action="{% url 'myportfolio' %}" method="post"  >
+<main class="container my-4">
+    <h1 class="my-4 border-bottom pb-1" style="text-align: center;width: 600px; margin-left: auto; margin-right: auto; margin-bottom: auto "><b><u>Buy the Stock</u></b></h1><br/><br/>
+  <table class="table table-bordered">
+  <form action="{% url 'myportfolio' %}" method="post"  >
  {% csrf_token %}
 
-    <p><h3><b>{{ symbol }} - {{ api.companyName }}</b></h3></p><br/>
-    <p>Enter the Quantity: <input type="number" name="quantity" ></p>
-    <input type="hidden" name="latest_price" value="{{ api.latestPrice }}"><br/>
-    <input type="hidden" name="symbol" value="{{ symbol }}"><br/>
+  <p><h3><b>{{ symbol }} - {{ api.companyName }}</b></h3></p><br/>
+  <p>Enter the Quantity: <input type="number" name="quantity" ></p>
+   <input type="hidden" name="stock_symbol" value="{{ symbol }}" ><br/>
+
+   <input type="hidden" name="latest_price" value="{{ api.latestPrice }}" ><br/>
+
     <p>Price: {{ api.latestPrice }}</p><br/>
     <p>Available Balance: {{ availableBal }}</p><br/>
     <button class="btn btn-outline-success" type="submit">Buy the Stock</button><br/>
 
 </form>
+</table>
+</main>
 {% endblock %}

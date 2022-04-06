@@ -1,11 +1,46 @@
 {% extends 'base.html' %}
 
 {% block content %}
- <h1>Your Details:</h1>
-    <h4>Profile Name:</h4>
-    <h4>Demat Account Number:</h4>
- <h1> Holding Statement</h1>
+
+ <h1 style="text-align: center"><b><u>Holding Statement</u></b> </h1> <br/><br/>
     <h5> {{ note }}</h5>
+
+
+
+    {%  for stocks in my_stock %}
+    <table class="table table-striped table-hover">
+  <thead class="table-dark">
+    <tr>
+      <th scope="col">Company Name</th>
+      <th scope="col">Stock Price</th>
+      <th scope="col">Previous Close</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Total Funds</th>
+      <th scope="col">Available Balance</th>
+      <th scope="col">Sell Now</th>
+
+    </tr>
+    <tr>
+        <th scope="col">{{ api.companyName }}</th>
+        <th scope="col">{{ api.latestPrice }}</th>
+        <th scope="col">{{ api.previousClose }}</th>
+        <th scope="col">{{ quantity }}</th>
+        <th scope="col">{{ buyAmount }}</th>
+        <th scope="col">{{ availableBal }}</th>
+
+    </tr>
+  {% endfor %}
+  </thead>
+    </table>
+
+
+
+
+
+
+
+
+
 <table class="table table-striped table-hover">
   <thead class="table-dark">
     <tr>
@@ -14,23 +49,18 @@
       <th scope="col">Previous Close</th>
       <th scope="col">Quantity</th>
       <th scope="col">Total Funds</th>
-      <th scope="col">Total Funds</th>
-      <th scope="col">Sell Now</th>
+      <th scope="col">Available Balance</th>
+
 
     </tr>
     <tr>
         <th scope="col">{{ api.companyName }}</th>
         <th scope="col">{{ api.latestPrice }}</th>
         <th scope="col">{{ api.previousClose }}</th>
-        <th scope="col">From Database</th>
-        <th scope="col">From Database</th>
-        <th scope="col">From Database</th>
-        <form action="{% url 'sell_stock' %}" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="symbol" class="form-control" value="{{ api.symbol }}">
-        <td><button  class="btn btn-outline-success" type="submit">Sell Now</button></td>
-        </form>
-    </tr>
+        <th scope="col">{{ quantity }}</th>
+        <th scope="col">{{ buyAmount }}</th>
+        <th scope="col">{{ availableBal }}</th>
+
   </thead>
   <tbody>
   {% if ticker %}
@@ -46,5 +76,6 @@
   </tbody>
 </table>
 {% endif %}
+
 <br/><br/>
 {% endblock %}

@@ -4,11 +4,13 @@
 <title>Watchlist</title>
 
 <h1><b>Your Watchlist</b></h1><br/>
+      <div class="h-auto">
       <form action="{% url 'watchlist' %}" method="POST" class="d-flex" >
           {% csrf_token %}
-        <input name="ticker" class="form-control me-2" type="search" placeholder="Add Ticker To Page" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Add to Watchlist</button>
+          <input name="ticker" class="form-control me-2 my-2" type="search" placeholder="Add Ticker To Page" aria-label="Search">
+        <button class="btn btn-outline-success btn-sm" type="submit">Add to Watchlist</button>
       </form>
+      </div>
       <br/>
 <table class="table table-striped table-hover">
   <thead class="table-dark">

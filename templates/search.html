@@ -6,27 +6,54 @@
 <br/>
 <br/>
 {% if api %}
-    {% if api == "Error..." %}
-        <h3>There was a problem with your ticker symbol, please try again later</h3>
-    {% else %}
-        <h1>{{ api.companyName }}</h1><br/><br/>
-        Price: ${{ api.latestPrice }}<br/><br/>
-        Previous Close: {{ api.previousClose }}<br/><br/>
-        Market Cap: {{ api.marketCap }}<br/><br/>
-        YTD Change: {{ api.ytdChange }}<br/><br/>
-        52Wk High: {{ api.week52High }}<br/><br/>
-        52Wk Low: {{ api.week52Low }}<br/><br/>
-        <div>
+        <h1 class="text-center">{{ api.companyName }}</h1><br/><br/>
+        <table class="table">
+        <tr>
+            <thead class="thead-dark text-center">
+                <th>Field</th>
+                <th style="border-right-width: 1px;">Value</th>
+                <th>Field</th>
+                <th>Value</th>
+            </thead>
+        </tr>
+        <tr class="text-center">
+            <td>Primary Exchange</td>
+            <td style="border-right-width: 1px;"> {{ api.primaryExchange }}</td>
+            <td>Price</td>
+            <td> ${{ api.latestPrice }}</td>
+        </tr>
+        <tr class="text-center">
+            <td>Previous Close</td>
+            <td style="border-right-width: 1px;">{{ api.previousClose }}</td>
+            <td>Total Volume</td>
+            <td>{{ api.avgTotalVolume }}</td>
+        </tr>
+        <tr class="text-center">
+            <td>Market Cap</td>
+            <td style="border-right-width: 1px;">{{ api.marketCap }}</td>
+            <td>YTD Change</td>
+            <td>{{ api.ytdChange }}</td>
+        </tr>
+        <tr class="text-center">
+            <td>52Wk High</td>
+            <td style="border-right-width: 1px;">{{ api.week52High }}</td>
+            <td>52Wk Low</td>
+            <td>{{ api.week52Low }}</td>
+        </tr>
+        </table>
+        <div class="d-flex justify-content-center">
         <br/><br/>
         <form action="{% url 'watchlist' %}" method="POST" class="d-flex" >
           {% csrf_token %}
             <input type="hidden" name="ticker" class="form-control" value="{{ api.symbol }}">
+            {% if user.is_authenticated %}
             <button class="btn btn-outline-success" type="submit">Add To Watchlist</button>
+            {% endif %}
         </form>
 
         </div>
 
-    {% endif %}
+
 {% endif %}
 
 {% endblock %}

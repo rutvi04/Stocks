@@ -49,11 +49,14 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+
+
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_session_timeout.middleware.SessionTimeoutMiddleware'
 ]
 
 ROOT_URLCONF = 'Stocks.urls'
@@ -135,7 +138,23 @@ STATICFILES_DIRS = (
 LOGIN_REDIRECT_URL='index'
 LOGOUT_REDIRECT_URL='login'
 
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'Client_ID')
+MEDIA_URL = '/Client_ID/'
+
+SESSION_EXPIRE_SECONDS= 30000
+SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'money.control202203@gmail.com'
+EMAIL_HOST_PASSWORD = 'qwerty@2022'
