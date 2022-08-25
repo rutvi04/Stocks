@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<main class="container my-4">
+    <h1 class="my-4 border-bottom pb-1" style="text-align: center"><b><u>Add Funds</u></b></h1><br/><br/>
+    <table class="table table-bordered" style="">
+         <form action="{% url 'add_fund' %}" method="post"  >
+         {% csrf_token %}
+         <p>Available Balance:{{ availableBal }}</p><br/>
+         <p>Enter amount to be added: <input type="number" name="amount" ></p> <br/>
+
+         <button class="btn btn-outline-success" type="submit">Add the fund</button><br/>
+
+         </form>
+    </table>
+
+</main>
+{% endblock %}

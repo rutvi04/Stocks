@@ -155,12 +155,6 @@ def myportfolio(request):
                 P = Profile.objects.get(user=request.user)
                 P.available_bal = availableBal
                 P.save()
-                #ms = my_stocks.objects.get(my_author=request.user)
-
-               # Profile.objects.filter(user=(Profile.objects.get(user=request.user))).update(available_bal = 'availableBal')
-               # Profile.objects.get(user=request.user).update(available_bal = 'availableBal')
-
-               # availableBal.save(update_fields=['available_bal'])
 
                 instance = form.save(commit=False)
                 instance.stock_symbol = symbol
@@ -292,18 +286,19 @@ def profile(request):
             user_form.save()
             profile_form.save()
             messages.success(request, 'Your profile was successfully updated!')
-            return redirect('edit_profile')
-    # else:
-            # messages.error(request, _('Please correct the error below.'))
+            return render(request,'edit_profile.html',{})
+        else:
+            messages.error(request, "Please correct the error below.")
     else:
         user_form = SignupForm(instance=request.user)
         profile_form = ProfileForm(instance=request.user.profile)
-        context = {'user_form': user_form,'profile_form': profile_form,'available_bal': Profile.objects.get(user=request.user).available_bal, 'invested_bal': Profile.objects.get(user=request.user).invested_bal}
-    return render(request, 'registration/edit_profile.html', context)
+
+        context = {'user_form': user_form,'profile_form': profile_form,'available_bal': Profile.objects.get(user=request.user).available_bal}
+        return render(request, 'registration/edit_profile.html', context)
+
 
 def portfolio(request):
 
     holding_list = my_stocks.objects.filter(my_author=request.user)
-    #buy_list = []
-    #for holding in holding_list:
+
     return render(request,'portfolio.html',{'holding_list': holding_list})

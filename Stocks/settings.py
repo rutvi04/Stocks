@@ -148,7 +148,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'Client_ID')
 MEDIA_URL = '/Client_ID/'
 
-SESSION_EXPIRE_SECONDS= 30000
+SESSION_EXPIRE_SECONDS= 300
 SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
